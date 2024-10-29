@@ -14,9 +14,12 @@
 .action-bar {
   display: flex;
   flex-direction: row;
-  justify-content: right;
 }
 
+.action-tabs {
+  max-width: 65vw;
+  overflow: auto;
+}
 .bottom {
   width: 100%;
   display: flex;

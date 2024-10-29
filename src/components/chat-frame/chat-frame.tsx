@@ -1,81 +1,141 @@
 import './chat-frame.css';
 import React, { useState } from 'react';
 import {
-  Button, CircularProgress,
+  Box,
+  Button,
+  CircularProgress,
   Divider,
   IconButton,
   Paper,
+  Tab,
+  Tabs,
   TextField,
-  Tooltip
-} from "@mui/material";
+  Tooltip,
+} from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import { HelpOutlined, ListOutlined } from '@mui/icons-material';
+import { Delete, HelpOutlined, ListOutlined } from '@mui/icons-material';
 import axios from 'axios';
 import Message, { MessageProps } from '../message/message';
 
+export type TabType = {
+  title: string;
+  messages: MessageProps[];
+};
+
 function ChatFrame() {
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState<MessageProps[]>([
+  const [tabs, setTabs] = useState<TabType[]>([
     {
-      type: 'self',
-      message: 'Witam',
-      date: new Date().toISOString(),
-    },
-    {
-      type: 'received',
-      message: 'Witam tu bot',
-      date: new Date().toISOString(),
+      title: 'Tab 1',
+      messages: [
+        {
+          type: 'self',
+          message: 'Hello',
+          date: new Date().toISOString(),
+        },
+        {
+          type: 'received',
+          message: 'Hello from bot',
+          date: new Date().toISOString(),
+        },
+      ],
     },
   ]);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTabIndex(newValue);
+  };
+
   const addMessage = (messageObject: MessageProps) => {
     if (messageObject.message !== '') {
       setIsLoading(true);
 
       setTimeout(() => {
-        axios.get('https://catfact.ninja/fact')
+        axios
+          .get('https://catfact.ninja/fact')
           .then((response) => {
             const botMessage: MessageProps = {
               type: 'received',
               message: response.data.fact,
-              date: new Date().toISOString()
+              date: new Date().toISOString(),
             };
-            setMessages([...messages, messageObject, botMessage]);
+            setTabs((prevTabs) => {
+              const updatedTabs = [...prevTabs];
+              updatedTabs[activeTabIndex].messages = [
+                ...updatedTabs[activeTabIndex].messages,
+                messageObject,
+                botMessage,
+              ];
+              return updatedTabs;
+            });
           })
           .catch((error) => {
-            console.error("Error fetching cat fact:", error);
+            console.error('Error fetching cat fact:', error);
           })
           .finally(() => setIsLoading(false));
       }, 3000); // 3-second delay
     }
-    console.log(messages);
+  };
+
+  const handleDeleteTab = () => {
+    if (tabs.length > 1) {
+      setTabs((prevTabs) => {
+        const updatedTabs = prevTabs.filter((_, index) => index !== activeTabIndex);
+        setActiveTabIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
+        return updatedTabs;
+      });
+    }
   };
 
   return (
-    <Paper sx={{ minWidth: '80vw', minHeight: '80vh' }}>
+    <Paper sx={{ minWidth: '90vw', minHeight: '80vh' }}>
       <div className="action-bar">
-        {isLoading && <CircularProgress  sx={{ width: '24px', height: '24px'}} />}
-        <Tooltip title="New chat">
-          <IconButton>
-            <AddBoxIcon sx={{ width: '36px', height: '36px' }} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="All chats">
-          <IconButton>
-            <ListOutlined sx={{ width: '36px', height: '36px' }} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="All chats">
-          <IconButton>
-            <HelpOutlined sx={{ width: '36px', height: '36px' }} />
-          </IconButton>
-        </Tooltip>
+        <div>
+          <Tooltip title="New chat">
+            <IconButton
+              onClick={() =>
+                setTabs([
+                  ...tabs,
+                  { title: `Tab ${tabs.length + 1}`, messages: [] },
+                ])
+              }
+            >
+              <AddBoxIcon sx={{ width: '36px', height: '36px' }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete chat">
+            <IconButton onClick={handleDeleteTab}>
+              <Delete sx={{ width: '36px', height: '36px' }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Help">
+            <IconButton>
+              <HelpOutlined sx={{ width: '36px', height: '36px' }} />
+            </IconButton>
+          </Tooltip>
+        </div>
+        <div className="action-tabs">
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs
+              value={activeTabIndex}
+              onChange={handleTabChange}
+              aria-label="chat tabs"
+            >
+              {tabs.map((tab, index) => (
+                <Tab key={index} label={tab.title} />
+              ))}
+            </Tabs>
+          </Box>
+        </div>
       </div>
       <Divider orientation="horizontal" flexItem />
       <div className="messages">
-        {messages.map((message) => (
+        {tabs[activeTabIndex].messages.map((message, idx) => (
           <Message
+            key={idx}
             type={message.type}
             message={message.message}
             date={message.date}
@@ -93,8 +153,7 @@ function ChatFrame() {
           onChange={(e) => setInput(e.target.value)}
         />
         <Button
-          color="success"
-          variant="contained"
+          variant="outlined"
           sx={{ mr: 2 }}
           onClick={() => {
             addMessage({
@@ -105,7 +164,11 @@ function ChatFrame() {
             setInput('');
           }}
         >
-          <SendIcon />
+          {isLoading ? (
+            <CircularProgress sx={{ width: '24px', height: '24px' }} />
+          ) : (
+            <SendIcon />
+          )}
         </Button>
       </div>
     </Paper>
