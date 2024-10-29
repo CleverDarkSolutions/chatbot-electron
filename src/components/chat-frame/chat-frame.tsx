@@ -1,5 +1,16 @@
 import './chat-frame.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import {
+  Button,
+  Divider,
+  IconButton,
+  Paper,
+  TextField,
+  Tooltip,
+} from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import { HelpOutlined, ListOutlined } from "@mui/icons-material";
 import Message, { MessageProps } from '../message/message';
 
 function ChatFrame() {
@@ -20,8 +31,25 @@ function ChatFrame() {
     setMessages([...messages, message, returnMessage]);
   };
   return (
-    <div className="container">
-      <div className="chat-title">Chatbot 1.0</div>
+    <Paper sx={{ minWidth: '80vw', minHeight: '80vh' }}>
+      <div className="action-bar">
+        <Tooltip title="New chat">
+          <IconButton>
+            <AddBoxIcon sx={{ width: '36px', height: '36px' }} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="All chats">
+          <IconButton>
+            <ListOutlined sx={{ width: '36px', height: '36px' }} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="All chats">
+          <IconButton>
+            <HelpOutlined sx={{ width: '36px', height: '36px' }} />
+          </IconButton>
+        </Tooltip>
+      </div>
+      <Divider orientation="horizontal" flexItem />
       <div className="messages">
         {messages.map((message) => (
           <Message
@@ -32,15 +60,19 @@ function ChatFrame() {
         ))}
       </div>
       <div className="bottom">
-        <input
-          className="input"
-          type="text"
+        <TextField
+          hiddenLabel
+          id="filled-hidden-label-normal"
+          defaultValue=""
+          variant="filled"
           value={input}
+          sx={{ width: '100%', p: 2 }}
           onChange={(e) => setInput(e.target.value)}
         />
-        <button
-          type="button"
-          className="button"
+        <Button
+          color="success"
+          variant="contained"
+          sx={{ mr: 2 }}
           onClick={() => {
             addMessage(
               {
@@ -57,10 +89,10 @@ function ChatFrame() {
             setInput('');
           }}
         >
-          Send
-        </button>
+          <SendIcon />
+        </Button>
       </div>
-    </div>
+    </Paper>
   );
 }
 

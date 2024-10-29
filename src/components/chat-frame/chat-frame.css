@@ -1,22 +1,20 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid white;
-  border-radius: 1rem;
-  height: 80vh;
-  padding: 1rem;
-}
-
 .chat-title {
   font-size: 36px;
   padding: 1rem;
-  border-bottom: 1px solid white;
 }
 
 .messages {
-  height: 85%;
+  height: 70vh;
+  max-height: 70vh;
   width: 100%;
   overflow-y: scroll;
+  margin-top: 1rem;
+}
+
+.action-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
 }
 
 .bottom {
@@ -24,8 +22,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid white;
-  padding-top: 1.5rem;
 }
 
 .input {

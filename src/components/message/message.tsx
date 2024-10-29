@@ -1,4 +1,5 @@
 import './message.css';
+import { Box } from '@mui/material';
 
 export type MessageProps = {
   type: 'self' | 'received';
@@ -9,11 +10,17 @@ export type MessageProps = {
 function Message(props: MessageProps) {
   const { type, message, date } = props;
   return (
-    <div className={type === 'self' ? 'message-container color-user' : 'message-container color-bot'}>
+    <Box
+      className={
+        type === 'self'
+          ? 'message-container color-user'
+          : 'message-container color-bot'
+      }
+    >
       {/* <div>{type}</div> */}
       <div>{message}</div>
       {/* <div>{date}</div> */}
-    </div>
+    </Box>
   );
 }
 

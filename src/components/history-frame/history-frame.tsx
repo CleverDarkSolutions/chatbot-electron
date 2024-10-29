@@ -1,11 +1,12 @@
 import './history-frame.css';
+import { Paper } from '@mui/material';
 
 function HistoryFrame() {
   return (
-    <div className="container">
+    <Paper>
       <div className="history-title">History</div>
       <div className="history-chats" />
-    </div>
+    </Paper>
   );
 }
 
