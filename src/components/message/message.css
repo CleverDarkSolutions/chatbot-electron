@@ -8,14 +8,16 @@
 }
 
 .color-bot{
-  background-color: #343434;
+  background: #D5C7BC;
+  border: 2px solid #AC92A6;
   margin-left: auto;
   position: relative;
   right: 1rem;
 }
 
 .color-user{
-  background-color: rebeccapurple;
+  border: 2px solid #DEE8D5;
+  background-color: #E9FAE3;
   margin-right: auto;
   position: relative;
   left: 1rem;
